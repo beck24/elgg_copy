@@ -1,0 +1,47 @@
+<?php
+/**
+* Sandbox plugin admin javascript
+*
+* JS (admin pages only, so no extend)
+*
+* @package sandbox
+* @author Arck Interactive
+* @copyright Arck Interactive, LLC 2015
+* @link http://www.arckinteractive.com/
+*/
+
+?>
+//<script>
+
+$(document).ready(function() {
+    $('.elgg-copy-trigger').click(function(e) {
+
+        e.preventDefault();
+
+        if (!confirm('This action will reset this instance to a current copy of the target. Are you sure?')) {
+            return false;
+        }
+
+        $('body').fancybox({
+            'modal' : true,
+            'content' : '<div style="min-height:150px;width:400px;"><h2>Resetting environment!</h2>'
+                      + '<br /><br />This process may take some time to complete depending on the amount of data required to sync.</div>'
+        });
+
+        var url = $(this).attr('href');
+
+        $.ajax({
+            url: url,
+            timeout: 72000000 // 20 hrs, walk away and leave it
+        })
+        .done(function() {
+            //alert( "success" );
+        })
+        .fail(function() {
+            //alert( "error" );
+        })
+        .always(function() {
+            window.location = elgg.get_site_url();
+        });
+    });
+});
