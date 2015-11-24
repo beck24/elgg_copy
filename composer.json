@@ -1,0 +1,20 @@
+{
+    "name": "beck24/elgg_copy",
+    "type": "elgg-plugin",
+    "provides": "beck24/elgg_copy",
+    "description": "A tool to sync data between a production and develpment elgg instance",
+    "homepage": "https://github.com/beck24/elgg_copy",
+    "keywords": ["elgg", "plugin", "copy", "dev", "development", "clone"],
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Matt Beckett"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/beck24/elgg_copy/issues"
+    },
+    "require": {
+        "composer/installers": ">=1.0.8"
+    }
+}
