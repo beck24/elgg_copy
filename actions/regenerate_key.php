@@ -1,6 +1,6 @@
 <?php
 
-namespace Arck\ElggCopy;
+namespace MBeckett\ElggCopy;
 
 $key = generate_key();
 

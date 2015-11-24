@@ -1,6 +1,6 @@
 <?php
 
-namespace Arck\ElggCopy;
+namespace MBeckett\ElggCopy;
 
 set_time_limit(0); // 2 hours
 
