@@ -1,16 +1,3 @@
-<?php
-/**
-* Sandbox plugin admin javascript
-*
-* JS (admin pages only, so no extend)
-*
-* @package sandbox
-* @author Arck Interactive
-* @copyright Arck Interactive, LLC 2015
-* @link http://www.arckinteractive.com/
-*/
-
-?>
 //<script>
 
 $(document).ready(function() {

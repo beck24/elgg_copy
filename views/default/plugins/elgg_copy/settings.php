@@ -1,10 +1,13 @@
 <?php
-	$regen = elgg_view('output/url', array(
-		'text' => 'Regenerate',
-		'href' => 'action/elgg_copy/regenerate_key',
-		'is_action' => true,
-		'confirm' => true
-	));
+
+namespace Mbeckett\ElggCopy;
+
+$regen = elgg_view('output/url', array(
+	'text' => 'Regenerate',
+	'href' => 'action/elgg_copy/regenerate_key',
+	'is_action' => true,
+	'confirm' => true
+));
 ?>
 <div>
     <p>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Arck\ElggCopy;
+namespace MBeckett\ElggCopy;
 
 const PLUGIN_ID = 'elgg_copy';
 

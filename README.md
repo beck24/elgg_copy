@@ -32,6 +32,10 @@ This key can be regenerated in the settings of master if there is reason to thin
 compromised.  It is recommended, however, that this plugin should be disabled on master the majority of the time
 and only activated when a sync needs to happen.
 
+The ability to sync the mod directory requires the mod directory of the dev environment to be
+writable by the server.  This isn't recommended for production but should be fine for a local dev
+environment.
+
 One additional note - the entire contents of the site will be transferred over standard
 http protocol, it is recommended that this only be used on production sites that are secured
 with ssl.

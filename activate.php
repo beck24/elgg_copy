@@ -1,6 +1,6 @@
 <?php
 
-namespace Arck\ElggCopy;
+namespace MBeckett\ElggCopy;
 
 $key = elgg_get_plugin_setting('request_key', PLUGIN_ID);
 if (!$key) {

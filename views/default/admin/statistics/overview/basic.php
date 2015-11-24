@@ -1,6 +1,6 @@
 <?php
 
-namespace Arck\ElggCopy;
+namespace Mbeckett\ElggCopy;
 
 // Work out number of users
 $users_stats = get_number_users();
