@@ -6,9 +6,7 @@ const PLUGIN_ID = 'elgg_copy';
 
 elgg_register_event_handler('init', 'system', __NAMESPACE__ . '\\init');
 
-function init() {
-	elgg_extend_view("js/admin", "js/elgg_copy/admin");
-	
+function init() {	
 	elgg_register_page_handler('elgg_copy', __NAMESPACE__ . '\\pagehandler');
     
     elgg_register_action('elgg_copy/reset', __DIR__ . "/actions/reset.php", 'admin');
@@ -137,6 +135,8 @@ function control_panel($hook, $type, $value) {
         'is_action' => true,
         'link_class' => 'elgg-button elgg-button-action elgg-copy-trigger',
     );
+    
+    elgg_require_js('elgg_copy/admin');
 
     $value[] = \ElggMenuItem::factory($options);
 
