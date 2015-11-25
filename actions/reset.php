@@ -4,10 +4,6 @@ namespace MBeckett\ElggCopy;
 
 set_time_limit(0); // 2 hours
 
-logout(); // if the incoming db doesn't have the current user it's messy
-
-elgg_set_ignore_access(true);
-
 $dataroot = elgg_get_config('dataroot');
 if (!is_dir($dataroot . 'elgg_copy/import')) {
     mkdir($dataroot . 'elgg_copy/import', 0755, true);
@@ -38,6 +34,15 @@ $update_database = elgg_get_plugin_setting('update_database', PLUGIN_ID);
 $settings_json = $dataroot . '/elgg_copy/import/settings.json';
 $database_sql = $dataroot . '/elgg_copy/import/database.sql.gz';
 $dataroot_zip = $dataroot . '/elgg_copy/import/dataroot.tar.gz';
+
+if (!$master_url || !$master_request_key) {
+    register_error('Invalid URL or request key');
+    forward(REFERER);
+}
+
+logout(); // if the incoming db doesn't have the current user it's messy
+
+elgg_set_ignore_access(true);
 
 @unlink($settings_json);
 @unlink($database_sql);
@@ -94,7 +99,7 @@ if ($update_mod) {
     foreach ($files as $file) {
         if (strpos(basename($file), 'elgg_copy') !== 0) {
             error_log('[elgg_copy] deleting ' . $file);
-            exec("rm -rf {$file}");
+            exec("chmod -R 777 {$file}; rm -rf {$file}");
             if (is_dir($file) || is_file($file)) {
                 error_log('[elgg_copy] could not delete ' . $file);
             }
