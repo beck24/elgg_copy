@@ -4,9 +4,7 @@ namespace MBeckett\ElggCopy;
 
 set_time_limit(0); // 2 hours
 
-logout(); // if the incoming db doesn't have the current user it's messy
-
-elgg_set_ignore_access(true);
+_elgg_services()->db->disableQueryCache();
 
 $dataroot = elgg_get_config('dataroot');
 if (!is_dir($dataroot . 'elgg_copy/import')) {
@@ -38,6 +36,14 @@ $update_database = elgg_get_plugin_setting('update_database', PLUGIN_ID);
 $settings_json = $dataroot . '/elgg_copy/import/settings.json';
 $database_sql = $dataroot . '/elgg_copy/import/database.sql.gz';
 $dataroot_zip = $dataroot . '/elgg_copy/import/dataroot.tar.gz';
+
+if (!$master_url || !$master_request_key) {
+    register_error('Invalid URL or request key');
+    forward(REFERER);
+}
+
+logout(); // if the incoming db doesn't have the current user it's messy
+elgg_set_ignore_access(true);
 
 @unlink($settings_json);
 @unlink($database_sql);
@@ -78,7 +84,7 @@ if ($update_dataroot) {
 if ($update_mod) {
     // get our mod
     error_log('[elgg_copy] fetching remote mod directory - this may take a while');
-    $curl = "cd {$dataroot}elgg_copy/import; curl -fsS -m 7200 {$master_url}elgg_copy/mod/{$master_request_key} -o mod.zip";
+    $curl = "cd {$dataroot}elgg_copy/import; curl -fsS -m 7200 {$master_url}elgg_copy/mod/{$master_request_key} -o mod.zip;";
     exec($curl);
 
     if (!is_file($dataroot . 'elgg_copy/import/mod.zip') || !filesize($dataroot . 'elgg_copy/import/mod.zip')) {
@@ -87,14 +93,14 @@ if ($update_mod) {
         exit;
     }
 
-    exec("cd {$dataroot}elgg_copy/import; unzip mod.zip");
-    exec("rm {$dataroot}elgg_copy/import/mod.zip; rm -rf {$dataroot}elgg_copy/import/elgg_copy");
+    exec("cd {$dataroot}elgg_copy/import; unzip mod.zip;");
+    exec("rm {$dataroot}elgg_copy/import/mod.zip; rm -rf {$dataroot}elgg_copy/import/elgg_copy;");
     error_log('[elgg_copy] deleting existing mod directory');
     $files = glob($plugins_path . '*', GLOB_MARK);
     foreach ($files as $file) {
         if (strpos(basename($file), 'elgg_copy') !== 0) {
             error_log('[elgg_copy] deleting ' . $file);
-            exec("rm -rf {$file}");
+            exec("chmod -R 777 {$file}; rm -rf {$file}");
             if (is_dir($file) || is_file($file)) {
                 error_log('[elgg_copy] could not delete ' . $file);
             }
@@ -103,7 +109,12 @@ if ($update_mod) {
 
     // move the dataroot back into place
     error_log('[elgg_copy] moving mod into place');
-    exec("mv {$dataroot}elgg_copy/import/* {$plugins_path}; rm -rf {$dataroot}elgg_copy/import/*");
+    exec("mv {$dataroot}elgg_copy/import/* {$plugins_path}; rm -rf {$dataroot}elgg_copy/import/*;");
+    $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($plugins_path), \RecursiveIteratorIterator::SELF_FIRST); 
+
+    foreach($iterator as $item) { 
+        chmod($item, 0777); 
+    } 
 }
 
 if ($update_database) {
@@ -149,13 +160,27 @@ if ($update_database) {
     update_data("UPDATE {$dbprefix}datalists SET value = '{$dataroot}' where name = 'dataroot'");
     update_data("UPDATE {$dbprefix}datalists SET value = '{$path}' where name = 'path'");
     update_data("UPDATE {$dbprefix}sites_entity SET url = '{$url}' where guid = 1");
+    update_data("UPDATE {$dbprefix}metastrings SET string = '{$dataroot}'
+WHERE id = (
+   SELECT value_id
+   FROM {$dbprefix}metadata
+   WHERE name_id = (
+      SELECT *
+      FROM (
+         SELECT id
+         FROM {$dbprefix}metastrings
+         WHERE string = 'filestore::dir_root'
+      ) as ms2
+   )
+   LIMIT 1
+)");
 }
 
 // Invalidate cache
 error_log("[elgg_copy] Invalidating cache");
 elgg_invalidate_simplecache();
 elgg_reset_system_cache();
-_elgg_invalidate_query_cache();
+
 _elgg_invalidate_cache_for_entity($elgg_copy_plugin->guid);
 _elgg_invalidate_memcache_for_entity($elgg_copy_plugin->guid);
 _elgg_disable_caching_for_entity($elgg_copy_plugin->guid);
@@ -164,7 +189,7 @@ elgg_set_config('plugins_by_id_map', array());
 
 // regenerate plugin entities
 error_log("[elgg_copy] Regenerating plugin entities");
-elgg_generate_plugin_entities();
+regenerate_plugin_list();
 
 
 // Update the sandbox settings
