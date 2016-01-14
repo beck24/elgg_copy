@@ -189,7 +189,7 @@ elgg_set_config('plugins_by_id_map', array());
 
 // regenerate plugin entities
 error_log("[elgg_copy] Regenerating plugin entities");
-regenerate_plugin_list();
+_elgg_generate_plugin_entities();
 
 
 // Update the sandbox settings
