@@ -154,6 +154,11 @@ if ($update_database) {
     update_data("UPDATE {$dbprefix}datalists SET value = '{$dataroot}' where name = 'dataroot'");
     update_data("UPDATE {$dbprefix}datalists SET value = '{$path}' where name = 'path'");
     update_data("UPDATE {$dbprefix}sites_entity SET url = '{$url}' where guid = 1");
+	
+	// turn off https login if necessary
+	if (strpos($url, 'https') === false) {
+		update_data("UPDATE {$dbprefix}config SET value = 'i:0;' where name = 'https_login'");
+	}
 }
 
 // Invalidate cache
@@ -162,7 +167,6 @@ elgg_invalidate_simplecache();
 elgg_reset_system_cache();
 _elgg_invalidate_query_cache();
 _elgg_invalidate_cache_for_entity($elgg_copy_plugin->guid);
-_elgg_invalidate_memcache_for_entity($elgg_copy_plugin->guid);
 _elgg_disable_caching_for_entity($elgg_copy_plugin->guid);
 // unset plugins cache
 elgg_set_config('plugins_by_id_map', array());

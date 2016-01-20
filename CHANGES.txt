@@ -1,0 +1,7 @@
+== Version History ==
+
+x.x (mm/dd/yyyy):
+
+1.0.2 (01/20/2016):
+ - disable https_login when syncing from https prod to http dev
+ - fix fatal error for earlier 1.8 versions due to private API
