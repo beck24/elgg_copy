@@ -174,6 +174,11 @@ WHERE id = (
    )
    LIMIT 1
 )");
+		 
+	// turn off https login if necessary
+	if (strpos($url, 'https') === false) {
+		update_data("UPDATE {$dbprefix}config SET value = 'i:0;' where name = 'https_login'");
+	}
 }
 
 // Invalidate cache
