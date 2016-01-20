@@ -13,6 +13,7 @@ function init() {
 	elgg_register_action('elgg_copy/regenerate_key', __DIR__ . '/actions/regenerate_key.php', 'admin');
 
     elgg_register_plugin_hook_handler('register', 'menu:admin_control_panel', __NAMESPACE__ . '\\control_panel');
+	elgg_register_plugin_hook_handler('public_pages', 'walled_garden', __NAMESPACE__ . '\\public_pages');
 	
 	if (elgg_in_context('admin')) {
 		elgg_load_js('lightbox');
@@ -142,3 +143,12 @@ function control_panel($hook, $type, $value) {
 
     return $value;
 }
+
+/**
+ * Extend the public pages range
+ *
+ */
+function public_pages($hook, $handler, $return, $params){
+	$pages = array('elgg_copy/.*');
+	return array_merge($pages, $return);
+} 
